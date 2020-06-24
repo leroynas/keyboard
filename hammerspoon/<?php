@@ -1,0 +1,41 @@
+<?php
+
+switch($host = $_SERVER['HTTP_HOST']) {
+    case 'gis.b2b.leroy':
+        break;
+
+    case 'gis.aptiv-pl.leroy':
+        $_SERVER[\Magento\Store\Model\StoreManager::PARAM_RUN_CODE] = 'aptiv_pl';
+        $_SERVER[\Magento\Store\Model\StoreManager::PARAM_RUN_TYPE] = 'website';
+        break;
+
+    case 'gis.aptiv-tr.leroy':
+        $_SERVER[\Magento\Store\Model\StoreManager::PARAM_RUN_CODE] = 'aptiv_tr';
+        $_SERVER[\Magento\Store\Model\StoreManager::PARAM_RUN_TYPE] = 'website';
+        break;
+
+    case 'gis.aptiv-hu.leroy':
+        $_SERVER[\Magento\Store\Model\StoreManager::PARAM_RUN_CODE] = 'aptiv_hu';
+        $_SERVER[\Magento\Store\Model\StoreManager::PARAM_RUN_TYPE] = 'website';
+        break;
+
+    case 'gis.aptiv-ro.leroy':
+        $_SERVER[\Magento\Store\Model\StoreManager::PARAM_RUN_CODE] = 'aptiv_ro';
+        $_SERVER[\Magento\Store\Model\StoreManager::PARAM_RUN_TYPE] = 'website';
+        break;
+
+    case 'gis.alstom-crl.leroy':
+        $_SERVER[\Magento\Store\Model\StoreManager::PARAM_RUN_CODE] = "alstom_crl";
+        $_SERVER[\Magento\Store\Model\StoreManager::PARAM_RUN_TYPE] = "website";
+        break;
+
+    case 'gis.alstom-blf.leroy':
+        $_SERVER[\Magento\Store\Model\StoreManager::PARAM_RUN_CODE] = "alstom_blf";
+        $_SERVER[\Magento\Store\Model\StoreManager::PARAM_RUN_TYPE] = "website";
+        break;
+
+    case 'gis.alstom-lcr.leroy':
+        $_SERVER[\Magento\Store\Model\StoreManager::PARAM_RUN_CODE] = "alstom_lcr";
+        $_SERVER[\Magento\Store\Model\StoreManager::PARAM_RUN_TYPE] = "website";
+        break;
+}
