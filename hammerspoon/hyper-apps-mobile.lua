@@ -6,7 +6,7 @@ return {
 
   { 'h', { 'com.postmanlabs.mac' } },
   { 'j', { 'com.google.Chrome' } },
-  { 'k', { 'com.microsoft.VSCode' } },
+  { 'k', { 'org.mozilla.firefox', 'com.microsoft.VSCode' } },
   { 'l', { 'com.googlecode.iterm2' } },
   { ';', { 'com.apple.finder' } },
 

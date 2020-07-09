@@ -1,4 +1,5 @@
 local default = require('keyboard.hyper-apps-default')
+local mobile = require('keyboard.hyper-apps-mobile')
 local magento = require('keyboard.hyper-apps-magento')
 
 hs.application.enableSpotlightForNameSearches(true)
@@ -10,21 +11,39 @@ function mapKeyBindings (hyperModeAppMappings, name)
 
   for i, mapping in ipairs(hyperModeAppMappings) do
     local key = mapping[1]
-    local app = mapping[2]
+    local apps = mapping[2]
 
     hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, key, function()
-      if (type(app) == 'string') then
-        local application = hs.application.get(app)
-        
-        
-        if (application) then
-          if (application:isFrontmost()) then
-            application:hide()
+      if (type(apps) == 'table') then
+        local anyFrontMost = false;
+
+        for i, app in ipairs(apps) do
+          local application = hs.application.get(app)
+
+          if (application) then
+            if (application:isFrontmost()) then
+              anyFrontMost = true;
+            end
+          end
+        end
+
+        for i, app in ipairs(apps) do
+          local application = hs.application.get(app)
+
+          hs.logger.new('hyper'):e(app)
+
+          if (application) then
+            if (anyFrontMost) then
+              application:hide()
+              hs.logger.new('hyper'):e(app, 'hide')
+            else
+              hs.application.open(app)
+              os.execute("sleep " .. 0.001)
+              hs.logger.new('hyper'):e(app, 'open')
+            end
           else
             hs.application.open(app)
           end
-        else
-          hs.application.open(app)
         end
       elseif (type(app) == 'function') then
         app()
@@ -43,6 +62,10 @@ hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, '1', nil, function()
 end)
 
 hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, '2', nil, function()
+  mapKeyBindings(mobile, 'mobile')
+end)
+
+hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, '3', nil, function()
   mapKeyBindings(magento, 'magento')
 end)
 
