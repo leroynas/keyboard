@@ -11,4 +11,5 @@ return {
   { ';', { 'com.apple.finder' } },
 
   { 'm', { 'com.adobe.xd' } },
+  { 'n', { 'temp' } },
 }

@@ -1,6 +1,7 @@
 local default = require('keyboard.hyper-apps-default')
 local mobile = require('keyboard.hyper-apps-mobile')
 local magento = require('keyboard.hyper-apps-magento')
+tempApplication = ''
 
 hs.application.enableSpotlightForNameSearches(true)
 
@@ -27,7 +28,8 @@ function mapKeyBindings (hyperModeAppMappings, name)
           end
         end
 
-        for i, app in ipairs(apps) do
+        for i, item in ipairs(apps) do
+          local app = item == 'temp' and tempApplication or item;
           local application = hs.application.get(app)
 
           hs.logger.new('hyper'):e(app)
@@ -72,4 +74,8 @@ end)
 hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, '0', nil, function()
   local bundleID = hs.application.frontmostApplication():bundleID()
   hs.pasteboard.setContents(bundleID)
+end)
+
+hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, '9', nil, function()
+  tempApplication = hs.application.frontmostApplication():bundleID()
 end)
