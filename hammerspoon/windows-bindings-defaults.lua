@@ -25,24 +25,9 @@
 --------------------------------------------------------------------------------
 
 return {
-  modifiers = {'ctrl'},
-  showHelp  = false,
-  trigger   = 's',
   mappings  = {
-    { {},         'return',           'maximize' },
-    { {},         'space',            'centerWithFullHeight' },
-    { {},         'left',       'left' },
-    { {},         'down',       'down' },
-    { {},         'up',         'up' },
-    { {},         'right',      'right' },
-    { {'shift'},  'left',       'left80' },
-    { {'shift'},  'right',      'right20' },
-    { {},         'i',          'upLeft' },
-    { {},         'o',          'upRight' },
-    { {},         ',',          'downLeft' },
-    { {},         '.',          'downRight' },
-    { {},         'n',          'nextScreen' },
-    { {'ctrl'},   'right',      'moveOneScreenEast' },
-    { {'ctrl'},    'left',       'moveOneScreenWest' },
+    { 'return',     'maximize' },
+    { 'left',       'left' },
+    { 'right',      'right' },
   }
 }

@@ -7,9 +7,10 @@ function drawCanvas (text)
   local textSize = 100
 
   local rect = hs.canvas.new({
-    x = (max.w - width) / 2,
-    y = (max.h - height) / 2,
+    x = 0,
+    y = 0,
     h = height,
+     
     w = width
   })
 
@@ -28,7 +29,7 @@ function drawCanvas (text)
       h = textSize,
       w = width,
       x = 0,
-      y = (height - textSize) / 2
+      y = (height - textSize) / 2 ,
     },
     textAlignment = "center",
     textSize = textSize,
