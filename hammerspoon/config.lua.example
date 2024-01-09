@@ -1,0 +1,92 @@
+return {
+    -- Autolock
+    -- TIP: to get the device address, run `system_profiler SPBluetoothDataType` in the terminal
+    AUTOLOCK_ENABLED = false,
+    AUTOLOCK_DEVICE_ADDRESS = '',
+    AUTOLOCK_USER_PASSWORD = '',
+    AUTOLOCK_INTERVAL = 1.5,
+    AUTOLOCK_RSSI_THRESHOLD = 75,
+    AUTOLOCK_COUNT_THRESHOLD = 2,
+    AUTOLOCK_UNLOCK_DELAY = 0.3,
+    
+    -- Hyper
+    -- TIP: to get the application bundle identifier, use SUPER + 0
+    HYPER_APPS = {
+        { 't', 'com.google.Chrome.app.agimnkijcaahngcdmfeangaknmldooml' }, -- Youtube
+        { 'y', 'com.spotify.client' },
+        { 'u', 'WhatsApp' },
+        { 'i', 'com.tinyspeck.slackmacgap' },
+        { 'o', 'com.microsoft.Outlook' },
+        { 'p', 'com.microsoft.teams' },
+        { '[', 'com.apple.Preview' },
+        
+        { 'g', 'com.sequel-ace.sequel-ace' },
+        { 'h', 'com.postmanlabs.mac' },
+        { 'j', 'com.google.Chrome' },
+        { 'k', 'com.microsoft.VSCode' },
+        { 'l', 'dev.warp.Warp-Stable' },
+        { ';', 'com.apple.finder' },
+        { '\'', 'com.google.Chrome.app.jckaldkomadaenmmgladeopgmfbahfjm' }, -- ChatGPT
+        
+        { 'v', 'com.google.Chrome.app.piejkokinlnclhkbnajfjiklpnglogfn' }, -- Viaplay
+        { 'b', 'com.google.Chrome.app.jmbmfkcklehpncjdciobggbfknplngcl' }, -- Bitbucket
+        { 'n', 'com.google.Chrome.app.ninkclcondpjflmchmajlfpnmjfalnai' }, -- Jira
+        { 'm', 'com.figma.Desktop' },
+    },
+    
+    -- Windows
+    -- TIP: do not set the x, y, w, h to use the current value of the window
+    WINDOW_PRESETS = {
+        ['return'] = {
+            x = 0,
+            y = 0,
+            w = 1,
+            h = 1,
+        },
+        ['up'] = {
+            y = 0,
+            h = 0.5,
+        },
+        ['down'] = {
+            y = 0.5,
+            h = 0.5,
+        },
+    },
+    -- TIP: preset is applied up to defined window width
+    WINDOW_PRESETS_BY_SCREEN_WIDTH = {
+        [5000] = {
+            ['1'] = {
+                x = 0,
+                y = 0,
+                w = 0.55,
+                h = 1,
+            },
+            ['2'] = {
+                x = 0.55,
+                y = 0,
+                w = 0.45,
+                h = 1,
+            }
+        },
+        [9000] = {
+            ['1'] = {
+                x = 0,
+                y = 0,
+                w = 0.30,
+                h = 1,
+            },
+            ['2'] = {
+                x = 0.30,
+                y = 0,
+                w = 0.40,
+                h = 1,
+            },
+            ['3'] = {
+                x = 0.70,
+                y = 0,
+                w = 0.30,
+                h = 1,
+            }
+        }
+    }
+}
