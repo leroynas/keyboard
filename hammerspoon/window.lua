@@ -2,6 +2,18 @@ local config = require('keyboard.config')
 
 local debounceTimer = nil
 
+local function getWindowPresetKeys(table)
+    local keys = {}
+
+    for _, presets in pairs(table) do
+        for key, _ in pairs(presets) do
+            keys[key] = true
+        end
+    end
+
+    return keys
+end
+
 local function debounce(func, delay)
     if debounceTimer then
         debounceTimer:stop()
@@ -16,7 +28,7 @@ local function getCurrentScreenWidth()
     return hs.screen.mainScreen():frame().w
 end
 
-local function snapApplication (preset)
+local function snapApplication(preset)
     return function ()
         local window = hs.window.focusedWindow()
         local frame = window:frame()
@@ -31,31 +43,66 @@ local function snapApplication (preset)
     end
 end
 
-local initializeWindowPresets = function ()
-    for maxWidth, presets in pairs(config.WINDOW_PRESETS_BY_SCREEN_WIDTH) do
-        local currentScreenWidth = getCurrentScreenWidth()
-        
-        if currentScreenWidth < maxWidth then
-            for key, preset in pairs(presets) do
-                hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, key, nil, snapApplication(preset))
+local function snapApplicationByScreenWidth(key)
+    return function ()
+        local window = hs.window.focusedWindow()
+
+        if window then
+            local screenWidth = window:screen():frame().w
+
+            for maxScreenWidth, presets in pairs(config.WINDOW_PRESETS_BY_SCREEN_WIDTH) do
+                if screenWidth <= maxScreenWidth then
+                    preset = presets[key]
+                    break
+                end
+            end
+
+            if preset then
+                snapApplication(preset)()
             end
         end
     end
 end
 
 
-local function init ()
+local function maximizeApplication()
+    snapApplication({
+        x = 0,
+        y = 0,
+        w = 1,
+        h = 1,
+    })()
+end
+
+local function nextScreen()
+    return function ()
+        local window = hs.window.focusedWindow()
+        local screen = window:screen()
+        window:moveToScreen(screen:next())
+        maximizeApplication()
+    end
+end
+
+local function previousScreen()
+    return function ()
+        local window = hs.window.focusedWindow()
+        local screen = window:screen()
+        window:moveToScreen(screen:previous())
+        maximizeApplication()
+    end
+end
+
+local function init()
+    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'left', nil, nextScreen())
+    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'right', nil, previousScreen())
+
     for key, preset in pairs(config.WINDOW_PRESETS) do
         hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, key, nil, snapApplication(preset))
     end
-    
-    initializeWindowPresets()
 
-    screenWatcher = hs.screen.watcher.new(function()
-        debounce(initializeWindowPresets, 1)
-    end)
-    
-    screenWatcher:start()
+    for key, _ in pairs(getWindowPresetKeys(config.WINDOW_PRESETS_BY_SCREEN_WIDTH)) do
+        hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, key, nil, snapApplicationByScreenWidth(key))
+    end
 end
 
 init()
