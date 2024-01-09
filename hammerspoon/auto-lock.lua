@@ -20,7 +20,6 @@ local function typeString(str)
 end
 
 local function unlockSystem()
-    hs.execute("open -a /System/Library/CoreServices/Screen\\ Sharing.app")
     hs.eventtap.keyStroke({}, "space")
 
     hs.timer.doAfter(config.AUTOLOCK_UNLOCK_DELAY, function()
