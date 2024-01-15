@@ -39,7 +39,10 @@ local function copyPresetToClipboard()
     local w = roundToTwoDecimals(frame.w / screen.w)
     local h = roundToTwoDecimals(frame.h / screen.h)
 
-    hs.pasteboard.setContents('{ x = ' .. x .. ', y = ' .. y .. ', w = ' .. w .. ', h = ' .. h .. ' }')
+    local screenIndex = window:screen():id() - 1;
+    local screenString =  screenIndex == 1 and '' or ', screen = ' .. screenIndex;
+
+    hs.pasteboard.setContents('{ x = ' .. x .. ', y = ' .. y .. ', w = ' .. w .. ', h = ' .. h .. screenString .. ' }')
 end 
 
 local function getApplicationName(bundleID)
@@ -106,6 +109,7 @@ local function snapWindow(location, window)
     frame.h = location.h and screen.h * location.h or frame.h
     
     window:setFrame(frame)
+    window:focus()
 
     hs.window.animationDuration = 1
 end
@@ -134,20 +138,6 @@ local function maximizeApplication()
         w = 1,
         h = 1,
     })
-end
-
-local function nextScreen()
-    local window = hs.window.focusedWindow()
-    local screen = window:screen()
-    window:moveToScreen(screen:next())
-    maximizeApplication()
-end
-
-local function previousScreen()
-    local window = hs.window.focusedWindow()
-    local screen = window:screen()
-    window:moveToScreen(screen:previous())
-    maximizeApplication()
 end
 
 local function snapAllWindows()
@@ -208,8 +198,6 @@ local function init()
     snapAllWindows();
     initMenu();
 
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'left', nil, nextScreen)
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'right', nil, previousScreen)
     hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'w', nil, snapAllWindows)
     hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'r', nil, copyPresetToClipboard)
 
