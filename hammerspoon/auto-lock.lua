@@ -1,4 +1,4 @@
-local config = require('keyboard.config')
+local config = require('keyboard._config')
 
 local count = 0
 local previousRssi = 0
@@ -8,6 +8,11 @@ local function getRssiValue(input)
     local pattern = config.AUTOLOCK_DEVICE_ADDRESS .. "%s*.-RSSI:%s*-(%d+)"
     local rssiValue = input:match(pattern)
     return rssiValue and math.abs(tonumber(rssiValue))
+end
+
+function isDisabled()
+    local result = hs.execute("system_profiler SPBluetoothDataType")
+    return string.match(result, config.AUTOLOCK_DISABLED_BLUETOOTH_ADDRESS) ~= nil
 end
 
 local function getIsLocked()
@@ -30,10 +35,6 @@ local function unlockSystem()
 end
 
 local function run()
-    if not config.AUTOLOCK_ENABLED then
-        return
-    end
-
     local isLocked = getIsLocked()
     local result = hs.execute("system_profiler SPBluetoothDataType")
     local rssi = getRssiValue(result)
@@ -63,6 +64,10 @@ local function run()
 end
 
 local function init()
+    if isDisabled() then
+        return
+    end
+
     interval = hs.timer.new(config.AUTOLOCK_INTERVAL, run)
     interval:start()
 end

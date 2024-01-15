@@ -1,12 +1,37 @@
-local config = require('keyboard.config')
+local config = require('keyboard._config')
 
-local debounceTimer = nil
+function roundToTwoDecimals(number)
+    return math.floor(number * 100 + 0.5) / 100
+end
 
-local function getWindowPresetKeys(table)
+local function copyPresetToClipboard()
+    local window = hs.window.focusedWindow()
+    local frame = window:frame()
+    local screen = window:screen():frame()
+
+    local x = roundToTwoDecimals((frame.x - screen.x) / screen.w)
+    local y = roundToTwoDecimals((frame.y - screen.y) / screen.h)
+    local w = roundToTwoDecimals(frame.w / screen.w)
+    local h = roundToTwoDecimals(frame.h / screen.h)
+
+    hs.pasteboard.setContents('{ x = ' .. x .. ', y = ' .. y .. ', w = ' .. w .. ', h = ' .. h .. ' }')
+end 
+
+function getApplicationName(bundleID)
+    for _, application in ipairs(config.HYPER_APPS) do
+        if application[2] == bundleID then
+            return application[3]
+        end
+    end
+
+    return nil
+end
+
+local function getWindowLocationsKeys()
     local keys = {}
 
-    for _, presets in pairs(table) do
-        for key, _ in pairs(presets) do
+    for _, locations in pairs(config.WINDOW_LOCATIONS) do
+        for key, _ in pairs(locations) do
             keys[key] = true
         end
     end
@@ -14,51 +39,87 @@ local function getWindowPresetKeys(table)
     return keys
 end
 
-local function debounce(func, delay)
-    if debounceTimer then
-        debounceTimer:stop()
-    end
-
-    debounceTimer = hs.timer.delayed.new(delay, function()
-        func()
-    end):start()
-end
-
 local function getCurrentScreenWidth()
     return hs.screen.mainScreen():frame().w
 end
 
-local function snapApplication(preset)
-    return function ()
-        local window = hs.window.focusedWindow()
-        local frame = window:frame()
-        local screen = window:screen():frame()
-        
-        frame.x = preset.x and screen.x + screen.w * preset.x or frame.x
-        frame.y = preset.y and screen.y + screen.h * preset.y or frame.y
-        frame.w = preset.w and screen.w * preset.w or frame.w
-        frame.h = preset.h and screen.h * preset.h or frame.h
-        
-        window:setFrame(frame)
+local function getWindowLocations()
+    for maxScreenWidth, locations in pairs(config.WINDOW_LOCATIONS) do
+        if getCurrentScreenWidth() <= maxScreenWidth then
+            return locations
+        end
     end
+
+    return nil
 end
 
-local function snapApplicationByScreenWidth(key)
-    return function ()
-        local window = hs.window.focusedWindow()
 
-        if window then
-            local screenWidth = window:screen():frame().w
+local function getWindowLocation(key)
+    local locations = getWindowLocations()
+    return locations and locations[key] or nil
+end
 
-            for maxScreenWidth, presets in pairs(config.WINDOW_PRESETS_BY_SCREEN_WIDTH) do
-                if screenWidth <= maxScreenWidth then
-                    preset = presets[key]
-                    break
-                end
+local function getWindowPresets()
+    for maxScreenWidth, presets in pairs(config.WINDOW_PRESETS) do
+        if getCurrentScreenWidth() <= maxScreenWidth then
+            return presets
+        end
+    end
+
+    return nil
+end
+
+function getApplicationLocationKey(name)
+    local presets = getWindowPresets()
+
+    for key, applications in pairs(presets) do
+        for _, application in ipairs(applications) do
+            if application == name then
+                return key
             end
+        end
+    end
 
-            if preset then
-                snapApplication(preset)()
+    return nil
+end
+
+local function snapWindow(location, window)
+    hs.window.animationDuration = 0
+
+    if not window then
+        window = hs.window.focusedWindow()
+    end
+
+    if location.screen then
+        window:moveToScreen(hs.screen.allScreens()[location.screen])
+    else
+        window:moveToScreen(hs.screen.primaryScreen())
+    end
+    
+    local frame = window:frame()
+    local screen = window:screen():frame()
+    
+    frame.x = location.x and screen.x + screen.w * location.x or frame.x
+    frame.y = location.y and screen.y + screen.h * location.y or frame.y
+    frame.w = location.w and screen.w * location.w or frame.w
+    frame.h = location.h and screen.h * location.h or frame.h
+    
+    window:setFrame(frame)
+
+    hs.window.animationDuration = 1
+end
+
+local function snapWindowByScreenWidth(key, application)
+    return function ()
+        local location = getWindowLocation(key)
+
+        if location then
+            if application then
+                for _, window in ipairs(application:allWindows()) do
+                    snapWindow(location, window)
+                end
+            else
+                snapWindow(location)
             end
         end
     end
@@ -66,43 +127,62 @@ end
 
 
 local function maximizeApplication()
-    snapApplication({
+    snapWindow({
         x = 0,
         y = 0,
         w = 1,
         h = 1,
-    })()
+    })
 end
 
 local function nextScreen()
-    return function ()
-        local window = hs.window.focusedWindow()
-        local screen = window:screen()
-        window:moveToScreen(screen:next())
-        maximizeApplication()
-    end
+    local window = hs.window.focusedWindow()
+    local screen = window:screen()
+    window:moveToScreen(screen:next())
+    maximizeApplication()
 end
 
 local function previousScreen()
-    return function ()
-        local window = hs.window.focusedWindow()
-        local screen = window:screen()
-        window:moveToScreen(screen:previous())
-        maximizeApplication()
+    local window = hs.window.focusedWindow()
+    local screen = window:screen()
+    window:moveToScreen(screen:previous())
+    maximizeApplication()
+end
+
+local function snapAllWindows()
+    local applications = hs.application.runningApplications()
+
+    for _, application in ipairs(applications) do
+        local name = getApplicationName(application:bundleID())
+        local key = getApplicationLocationKey(name)
+
+        if key then
+            snapWindowByScreenWidth(key, application)()
+        end
     end
 end
 
+local function windowCreated(window)
+    local application = window:application()
+
+    local name = getApplicationName(application:bundleID())
+    local key = getApplicationLocationKey(name)
+
+    snapWindowByScreenWidth(key, application)();
+end
+
 local function init()
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'left', nil, nextScreen())
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'right', nil, previousScreen())
+    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'left', nil, nextScreen)
+    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'right', nil, previousScreen)
+    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'e', nil, copyPresetToClipboard)
+    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'w', nil, snapAllWindows)
 
-    for key, preset in pairs(config.WINDOW_PRESETS) do
-        hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, key, nil, snapApplication(preset))
+    for key, _ in pairs(getWindowLocationsKeys()) do
+        hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, key, nil, snapWindowByScreenWidth(key))
     end
 
-    for key, _ in pairs(getWindowPresetKeys(config.WINDOW_PRESETS_BY_SCREEN_WIDTH)) do
-        hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, key, nil, snapApplicationByScreenWidth(key))
-    end
+    windowFilter = hs.window.filter.new()
+    windowFilter:subscribe(hs.window.filter.windowCreated, windowCreated)
 end
 
 init()
