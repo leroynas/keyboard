@@ -7,7 +7,7 @@ This setup is honed and tested with the following dependencies.
 
 ## Installation
 
-1. Copy the `config.lua.example` file and name it `config.lua`. Update the AUTOLOCK_ENABLED and AUTOLOCK_USER_PASSWORD to make use of the auto lock feature.
+1. Copy the `hammerspoon/_config.lua.example` file and name it `hammerspoon/_config.lua`. Update the AUTOLOCK_ENABLED and AUTOLOCK_USER_PASSWORD to make use of the auto lock feature.
 
 2. Run setup script from the root folder of the project
 
