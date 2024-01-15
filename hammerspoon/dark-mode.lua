@@ -16,3 +16,5 @@ local function init()
         setSystemDM(false)
     end)
 end
+
+init()

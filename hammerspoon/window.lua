@@ -1,6 +1,8 @@
 local config = require('keyboard._config')
+local render = require('keyboard._render')
+local workspace = '🏠';
 
-function roundToTwoDecimals(number)
+local function roundToTwoDecimals(number)
     return math.floor(number * 100 + 0.5) / 100
 end
 
@@ -17,7 +19,7 @@ local function copyPresetToClipboard()
     hs.pasteboard.setContents('{ x = ' .. x .. ', y = ' .. y .. ', w = ' .. w .. ', h = ' .. h .. ' }')
 end 
 
-function getApplicationName(bundleID)
+local function getApplicationName(bundleID)
     for _, application in ipairs(config.HYPER_APPS) do
         if application[2] == bundleID then
             return application[3]
@@ -39,38 +41,14 @@ local function getWindowLocationsKeys()
     return keys
 end
 
-local function getCurrentScreenWidth()
-    return hs.screen.mainScreen():frame().w
-end
-
-local function getWindowLocations()
-    for maxScreenWidth, locations in pairs(config.WINDOW_LOCATIONS) do
-        if getCurrentScreenWidth() <= maxScreenWidth then
-            return locations
-        end
-    end
-
-    return nil
-end
-
 
 local function getWindowLocation(key)
-    local locations = getWindowLocations()
+    local locations = config.WINDOW_LOCATIONS[workspace]
     return locations and locations[key] or nil
 end
 
-local function getWindowPresets()
-    for maxScreenWidth, presets in pairs(config.WINDOW_PRESETS) do
-        if getCurrentScreenWidth() <= maxScreenWidth then
-            return presets
-        end
-    end
-
-    return nil
-end
-
-function getApplicationLocationKey(name)
-    local presets = getWindowPresets()
+local function getApplicationLocationKey(name)
+    local presets = config.WINDOW_PRESETS[workspace]
 
     for key, applications in pairs(presets) do
         for _, application in ipairs(applications) do
@@ -109,7 +87,7 @@ local function snapWindow(location, window)
     hs.window.animationDuration = 1
 end
 
-local function snapWindowByScreenWidth(key, application)
+local function snapWorkspaceWindow(key, application)
     return function ()
         local location = getWindowLocation(key)
 
@@ -157,7 +135,7 @@ local function snapAllWindows()
         local key = getApplicationLocationKey(name)
 
         if key then
-            snapWindowByScreenWidth(key, application)()
+            snapWorkspaceWindow(key, application)()
         end
     end
 end
@@ -168,21 +146,36 @@ local function windowCreated(window)
     local name = getApplicationName(application:bundleID())
     local key = getApplicationLocationKey(name)
 
-    snapWindowByScreenWidth(key, application)();
+    snapWorkspaceWindow(key, application)();
+end
+
+local function toggleWorkspace()
+    if workspace == '🏠' then
+        workspace = '🏢'
+    else
+        workspace = '🏠'
+    end
+
+    local canvas = render.renderMessage('Workspace: ' .. workspace)
+
+    hs.timer.doAfter(0.5, function()
+        canvas:delete()
+    end)
 end
 
 local function init()
     hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'left', nil, nextScreen)
     hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'right', nil, previousScreen)
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'e', nil, copyPresetToClipboard)
     hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'w', nil, snapAllWindows)
+    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'e', nil, toggleWorkspace)
+    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'r', nil, copyPresetToClipboard)
 
     for key, _ in pairs(getWindowLocationsKeys()) do
-        hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, key, nil, snapWindowByScreenWidth(key))
+        hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, key, nil, snapWorkspaceWindow(key))
     end
 
-    windowFilter = hs.window.filter.new()
-    windowFilter:subscribe(hs.window.filter.windowCreated, windowCreated)
+    WindowFilter = hs.window.filter.new()
+    WindowFilter:subscribe(hs.window.filter.windowCreated, windowCreated)
 end
 
 init()

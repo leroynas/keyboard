@@ -8,7 +8,7 @@ local function copyIdToClipboard()
     hs.pasteboard.setContents(bundleID)
 end
 
-function getApplicationKey(bundleID)
+local function getApplicationKey(bundleID)
     for _, app in ipairs(config.HYPER_APPS) do
         if app[2] == bundleID then
             return app[1]

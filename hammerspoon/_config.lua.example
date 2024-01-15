@@ -1,16 +1,6 @@
 return {
-    -- Autolock
-    -- TIP: to get the device address, run `system_profiler SPBluetoothDataType` in the terminal
-    AUTOLOCK_DISABLED_BLUETOOTH_ADDRESS = '',
-    AUTOLOCK_DEVICE_ADDRESS = '',
-    AUTOLOCK_USER_PASSWORD = '1989',
-    AUTOLOCK_INTERVAL = 2,
-    AUTOLOCK_RSSI_THRESHOLD = 78,
-    AUTOLOCK_COUNT_THRESHOLD = 5,
-    AUTOLOCK_UNLOCK_DELAY = 0.3,
-
     -- Stand
-    STAND_ENABLED_BLUETOOTH_ADDRESS = "FC:F1:36:18:39:32",
+    STAND_ENABLED_BLUETOOTH_ADDRESS = '',
     
     -- Hyper
     -- TIP: to copy the application bundle identifier to your clipboard, use SUPER + 0
@@ -41,18 +31,7 @@ return {
     -- TIP: to copy the current window location configuration to your clipboard, use SUPER + E
     -- TIP: to snap all widnows to the preset configuration, use SUPER + W
     WINDOW_LOCATIONS = {
-        [5000] = {
-            ['1'] = { x = 0, y = 0, w = 0.55, h = 1 }, -- primary
-            ['2'] = { x = 0.55, y = 0, w = 0.45, h = 1 }, -- secondary
-            ['3'] = { x = 0, y = 0, w = 1, h = 0.5, screen = 2  }, -- screen-2-top
-            ['4'] = { x = 0, y = 0.5, w = 1, h = 0.5, screen = 2 }, -- screen-2-bottom
-            ['5'] = { x = 0.1, y = 0.1, w = 0.8, h = 0.8 }, -- middle
-
-            ['return'] = { x = 0, y = 0, w = 1, h = 1 }, -- fullscreen
-            ['up'] = { y = 0, h = 0.5 }, -- top half
-            ['down'] = { y = 0.5, h = 0.5 }, -- bottom half
-        },
-        [9000] = {
+        ['🏠'] = {
             ['1'] = { x = 0.3, y = 0, w = 0.40, h = 1 }, -- primary
             ['2'] = { x = 0.7, y = 0, w = 0.3, h = 1 }, -- secondary
             ['3'] = { x = 0, y = 0, w = 0.3, h = 0.5 }, -- left-top
@@ -63,16 +42,27 @@ return {
             ['up'] = { y = 0, h = 0.5 }, -- top half
             ['down'] = { y = 0.5, h = 0.5 }, -- bottom half
         },
+        ['🏢'] = {
+            ['1'] = { x = 0, y = 0, w = 0.55, h = 1 }, -- primary
+            ['2'] = { x = 0.55, y = 0, w = 0.45, h = 1 }, -- secondary
+            ['3'] = { x = 0, y = 0, w = 1, h = 0.5, screen = 2  }, -- screen-2-top
+            ['4'] = { x = 0, y = 0.5, w = 1, h = 0.5, screen = 2 }, -- screen-2-bottom
+            ['5'] = { x = 0.1, y = 0.1, w = 0.8, h = 0.8 }, -- middle
+
+            ['return'] = { x = 0, y = 0, w = 1, h = 1 }, -- fullscreen
+            ['up'] = { y = 0, h = 0.5 }, -- top half
+            ['down'] = { y = 0.5, h = 0.5 }, -- bottom half
+        },
     },
     WINDOW_PRESETS = {
-        [5000] = {
+        ['🏠'] = {
             ['1'] = { 'vscode' }, -- primary
             ['2'] = { 'chrome', 'chatgpt', 'postman', 'figma' }, -- secondary
             ['3'] = { 'jira', 'bitbucket', 'youtube', 'viaplay', 'spotify', 'outlook', 'slack', 'whatsapp'  }, -- left-top
             ['4'] = { 'finder', 'preview', 'warp', 'sequel' }, -- left-bottom
             ['5'] = { 'teams' }, -- middle
         },
-        [9000] = {
+        ['🏢'] = {
             ['1'] = { 'vscode' }, -- primary
             ['2'] = { 'chrome', 'chatgpt', 'postman', 'figma' }, -- secondary
             ['3'] = { 'jira', 'bitbucket', 'youtube', 'viaplay', 'spotify', 'outlook', 'slack', 'whatsapp'  }, -- left-top

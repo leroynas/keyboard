@@ -1,32 +1,32 @@
 local config = require('keyboard._config')
 local render = require('keyboard._render')
 
-canvas = nil
-timer = nil
+Canvas = nil
+Timer = nil
 
-function isEnabled()
+local function isEnabled()
     local result = hs.execute("system_profiler SPBluetoothDataType")
     return string.match(result, config.STAND_ENABLED_BLUETOOTH_ADDRESS) ~= nil
-end
-
-local function hideMessage()
-    canvas:delete()
-    startTimer()
 end
 
 local function showMessage(message)
     local window = hs.window.focusedWindow()
     local screen = window:screen():frame()
 
-    canvas = render.renderFullScreen(message)
+    Canvas = render.renderFullScreen(message)
 end
 
 local function startTimer()
-    timer = hs.timer.doAfter(60 * 60 * 2, function ()
+    Timer = hs.timer.doAfter(60 * 60 * 2, function ()
         showMessage('Stand up!')
     end)
 
-    return timer:start()
+    return Timer:start()
+end
+
+local function hideMessage()
+    Canvas:delete()
+    startTimer()
 end
 
 local function init()

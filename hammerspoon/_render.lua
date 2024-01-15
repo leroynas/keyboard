@@ -8,23 +8,23 @@ function textBlock(text, width, height, textSize)
   local canvas = hs.canvas.new({ x = x, y = y, w = width, h = height })
 
   canvas:appendElements({
-      type = "rectangle",
-      action = "fill",
-      fillColor = { red = 0, green = 0, blue = 0, alpha = 1 },
-      frame = { x = 0, y = 0, w = width, h = height },
+    type = "rectangle",
+    action = "fill",
+    fillColor = { red = 0, green = 0, blue = 0, alpha = 1 },
+    frame = { x = 0, y = 0, w = width, h = height },
   })
 
   canvas:appendElements({
-      type = "text",
-      text = string.upper(text),
-      textFont = "Helvetica",
-      textAlignment = "center",
-      frame = { x = 0, y = (height - textSize) / 2, w = width, h = textSize },
-      textColor = { red = 1, green = 1, blue = 1, alpha = 1 },
-      textSize = textSize,
+    type = "text",
+    text = string.upper(text),
+    textFont = "Helvetica",
+    textAlignment = "center",
+    frame = { x = 0, y = (height - textSize) / 2, w = width, h = textSize },
+    textColor = { red = 1, green = 1, blue = 1, alpha = 1 },
+    textSize = textSize,
   })
 
-  canvas:show() 
+  canvas:show()
 
   return canvas
 end
@@ -37,7 +37,7 @@ local function renderFullScreen(text)
 end
 
 local function renderMessage(text)
-  return textBlock(text, 180, 70, 20)
+  return textBlock(text, 200, 70, 20)
 end
 
 return {
