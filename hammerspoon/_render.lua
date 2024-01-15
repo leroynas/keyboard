@@ -37,11 +37,30 @@ local function renderFullScreen(text)
 end
 
 local function renderMessage(text)
-  return textBlock(text, 200, 70, 20)
+    return textBlock(text, 200, 70, 20)
+end
+
+local function renderToolbar(text)
+  local canvas = hs.canvas.new({ x = 0, y = 0, w = 200, h = 26 })
+
+  canvas:appendElements({
+    type = "text",
+    text = string.upper(text),
+    textFont = "Helvetica",
+    textAlignment = "center",
+    frame = { x = 5, y = 0, w = 100, h = 16 },
+    textColor = { red = 1, green = 1, blue = 1, alpha = 1 },
+    textSize = 16,
+    })
+  
+  canvas:show()
+
+  return canvas
 end
 
 return {
   textBlock = textBlock,
   renderFullScreen = renderFullScreen,
   renderMessage = renderMessage,
+  renderToolbar = renderToolbar,
 }

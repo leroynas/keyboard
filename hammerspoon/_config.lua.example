@@ -1,9 +1,8 @@
 return {
     -- Stand
     STAND_ENABLED_BLUETOOTH_ADDRESS = '',
-    
+
     -- Hyper
-    -- TIP: to copy the application bundle identifier to your clipboard, use SUPER + 0
     HYPER_APPS = {
         { 't', 'com.google.Chrome.app.agimnkijcaahngcdmfeangaknmldooml', 'youtube' }, -- Youtube
         { 'y', 'com.spotify.client', 'spotify' },
@@ -28,8 +27,11 @@ return {
     },
 
     -- Windows
-    -- TIP: to copy the current window location configuration to your clipboard, use SUPER + E
-    -- TIP: to snap all widnows to the preset configuration, use SUPER + W
+    WINDOW_WORKSPACES = {
+        ['🏠'] = '<network_ip_address>',
+        ['🏢'] = '<network_ip_address>',
+    },
+
     WINDOW_LOCATIONS = {
         ['🏠'] = {
             ['1'] = { x = 0.3, y = 0, w = 0.40, h = 1 }, -- primary
@@ -38,7 +40,7 @@ return {
             ['4'] = { x = 0, y = 0.5, w = 0.3, h = 0.5 }, -- left-bottom
             ['5'] = { x = 0.2, y = 0.1, w = 0.6, h = 0.8 }, -- middle
 
-            ['return'] = { x = 0, y = 0, w = 1, h = 1 }, -- fullscreen
+            ['return'] = { x = 0, y = 0, w = 1, h = 1 }, -- full-screen
             ['up'] = { y = 0, h = 0.5 }, -- top half
             ['down'] = { y = 0.5, h = 0.5 }, -- bottom half
         },
@@ -49,7 +51,7 @@ return {
             ['4'] = { x = 0, y = 0.5, w = 1, h = 0.5, screen = 2 }, -- screen-2-bottom
             ['5'] = { x = 0.1, y = 0.1, w = 0.8, h = 0.8 }, -- middle
 
-            ['return'] = { x = 0, y = 0, w = 1, h = 1 }, -- fullscreen
+            ['return'] = { x = 0, y = 0, w = 1, h = 1 }, -- full-screen
             ['up'] = { y = 0, h = 0.5 }, -- top half
             ['down'] = { y = 0.5, h = 0.5 }, -- bottom half
         },

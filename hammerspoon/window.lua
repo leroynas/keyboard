@@ -1,9 +1,32 @@
 local config = require('keyboard._config')
-local render = require('keyboard._render')
+
 local workspace = '🏠';
+local menubar = nil
 
 local function roundToTwoDecimals(number)
     return math.floor(number * 100 + 0.5) / 100
+end
+
+local function getIpAddress()
+    local _, result = hs.http.get('https://ipinfo.io/ip')
+
+    if _ == 200 then
+        return result:match("%S+")
+    else
+        return nil
+    end
+end
+
+local function getWorkspaceForIPAddress()
+    local ipAddress = getIpAddress();
+
+    for workspace, ip in pairs(config.WINDOW_WORKSPACES) do
+        if ipAddress == ip then
+            return workspace
+        end
+    end
+
+    return '🏠';
 end
 
 local function copyPresetToClipboard()
@@ -149,29 +172,49 @@ local function windowCreated(window)
     snapWorkspaceWindow(key, application)();
 end
 
-local function toggleWorkspace()
-    if workspace == '🏠' then
-        workspace = '🏢'
-    else
-        workspace = '🏠'
+local function initMenu()
+    if menubar then
+        menubar:delete();
     end
 
-    local canvas = render.renderMessage('Workspace: ' .. workspace)
+    menubar = hs.menubar.new()
+    menubar:setIcon(hs.image.imageFromPath("keyboard/assets/icons/superman.png"))
 
-    hs.timer.doAfter(0.5, function()
-        canvas:delete()
-    end)
+    local menuData = {
+        { title = 'Snap windows', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'w') end },
+        { title = 'Copy app ID', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, '0') end },
+        { title = 'Copy preset', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'r') end },
+        { title = 'Show hotkey', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'space') end },
+    }
+
+    for icon, _ in pairs(config.WINDOW_WORKSPACES) do
+        if icon ~= workspace then
+            table.insert(menuData, {
+                title = "Switch to " .. icon,
+                fn = function()
+                    workspace = icon
+                    initMenu()
+                    snapAllWindows()
+                end
+            })
+        end
+    end
+
+    menubar:setMenu(menuData)
 end
 
 local function init()
+    workspace = getWorkspaceForIPAddress()
+    snapAllWindows();
+    initMenu();
+
     hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'left', nil, nextScreen)
     hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'right', nil, previousScreen)
     hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'w', nil, snapAllWindows)
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'e', nil, toggleWorkspace)
     hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'r', nil, copyPresetToClipboard)
 
     for key, _ in pairs(getWindowLocationsKeys()) do
-        hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, key, nil, snapWorkspaceWindow(key))
+        hs.hotkey.bind({ 'shift', 'ctrl', 'alt', 'cmd' }, key, nil, snapWorkspaceWindow(key))
     end
 
     WindowFilter = hs.window.filter.new()
@@ -179,3 +222,9 @@ local function init()
 end
 
 init()
+
+hs.caffeinate.watcher.new(function(eventType)
+    if eventType == hs.caffeinate.watcher.screensDidUnlock then
+        init()
+    end
+end):start()
