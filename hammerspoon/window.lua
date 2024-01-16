@@ -162,7 +162,7 @@ local function initMenu()
 
     local menuData = {
         { title = 'Snap windows (w)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'w') end },
-        { title = 'Hyper keys (9)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, '9') end },
+        { title = 'Hyper keys (9)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, '?') end },
         { title = 'Copy ID (0)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, '0') end },
         { title = 'Copy preset (e)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'e') end },
     }

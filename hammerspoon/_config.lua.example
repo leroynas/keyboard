@@ -29,7 +29,7 @@ return {
     -- Windows
     WINDOW_WORKSPACES = {
         ['🏠'] = '',
-        ['🏢'] = '92.65.187.26',
+        ['🏢'] = '',
     },
 
     WINDOW_LOCATIONS = {
