@@ -162,9 +162,9 @@ local function initMenu()
 
     local menuData = {
         { title = 'Snap windows (w)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'w') end },
-        { title = 'Hyper keys (9)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, '?') end },
-        { title = 'Copy ID (0)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, '0') end },
-        { title = 'Copy preset (e)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'e') end },
+        { title = 'Hyper keys (e)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'e') end },
+        { title = 'Copy ID (r)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'r') end },
+        { title = 'Copy preset (a)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 's') end },
     }
 
     for icon, _ in pairs(config.WINDOW_WORKSPACES) do
@@ -189,7 +189,7 @@ local function init()
     initMenu();
 
     hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'w', nil, snapAllWindows)
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'e', nil, copyPresetToClipboard)
+    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 's', nil, copyPresetToClipboard)
 
     for key, _ in pairs(getWindowLocationsKeys()) do
         hs.hotkey.bind({ 'shift', 'ctrl', 'alt', 'cmd' }, key, nil, snapWorkspaceWindow(key))

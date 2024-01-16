@@ -50,8 +50,8 @@ local function init()
         hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, key, toggleApplication(app))
     end
     
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, '?', nil, showApplicationHotkeys)
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, '0', nil, copyIdToClipboard)
+    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'e', nil, showApplicationHotkeys)
+    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'r', nil, copyIdToClipboard)
 end
 
 init()
