@@ -130,16 +130,6 @@ local function snapWorkspaceWindow(key, application)
     end
 end
 
-
-local function maximizeApplication()
-    snapWindow({
-        x = 0,
-        y = 0,
-        w = 1,
-        h = 1,
-    })
-end
-
 local function snapAllWindows()
     local applications = hs.application.runningApplications()
 
@@ -168,13 +158,13 @@ local function initMenu()
     end
 
     menubar = hs.menubar.new()
-    menubar:setIcon(hs.image.imageFromPath("keyboard/assets/icons/superman.png"))
+    menubar:setIcon(hs.image.imageFromPath("keyboard/assets/icons/hyper.png"):setSize({ w = 20, h = 20 }))
 
     local menuData = {
-        { title = 'Snap windows', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'w') end },
-        { title = 'Copy app ID', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, '0') end },
-        { title = 'Copy preset', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'r') end },
-        { title = 'Show hotkey', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'space') end },
+        { title = 'Snap windows (w)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'w') end },
+        { title = 'Hyper keys (9)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, '9') end },
+        { title = 'Copy ID (0)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, '0') end },
+        { title = 'Copy preset (e)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'e') end },
     }
 
     for icon, _ in pairs(config.WINDOW_WORKSPACES) do
@@ -199,7 +189,7 @@ local function init()
     initMenu();
 
     hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'w', nil, snapAllWindows)
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'r', nil, copyPresetToClipboard)
+    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'e', nil, copyPresetToClipboard)
 
     for key, _ in pairs(getWindowLocationsKeys()) do
         hs.hotkey.bind({ 'shift', 'ctrl', 'alt', 'cmd' }, key, nil, snapWorkspaceWindow(key))

@@ -2,9 +2,6 @@ return {
     -- Lock
     LOCK_KEY = 'forwarddelete',
 
-    -- Stand
-    STAND_ENABLED_BLUETOOTH_ADDRESS = '',
-
     -- Hyper
     HYPER_APPS = {
         { 't', 'com.google.Chrome.app.agimnkijcaahngcdmfeangaknmldooml', 'youtube' }, -- Youtube
