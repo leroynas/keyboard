@@ -1,32 +1,13 @@
 local config = require('keyboard._config')
-
-local workspace = '🏠';
-local menubar = nil
+local workspace = require('keyboard._workspace')
 
 local function roundToTwoDecimals(number)
     return math.floor(number * 100 + 0.5) / 100
 end
 
-local function getIpAddress()
-    local _, result = hs.http.get('https://ipinfo.io/ip')
-
-    if _ == 200 then
-        return result:match("%S+")
-    else
-        return nil
-    end
-end
-
-local function getWorkspaceForIPAddress()
-    local ipAddress = getIpAddress();
-
-    for workspace, ip in pairs(config.WINDOW_WORKSPACES) do
-        if ipAddress == ip then
-            return workspace
-        end
-    end
-
-    return '🏠';
+local function copyMainScreenToClipboard()
+    local mainScreen = hs.screen.mainScreen():name()
+    hs.pasteboard.setContents(mainScreen)
 end
 
 local function copyPresetToClipboard()
@@ -39,16 +20,28 @@ local function copyPresetToClipboard()
     local w = roundToTwoDecimals(frame.w / screen.w)
     local h = roundToTwoDecimals(frame.h / screen.h)
 
-    local screenIndex = window:screen():id() - 1;
-    local screenString =  screenIndex == 1 and '' or ', screen = ' .. screenIndex;
+    local screenIndex = window:screen():id() - 1
+    local screenString = screenIndex == 1 and '' or ', screen = ' .. screenIndex
 
-    hs.pasteboard.setContents('{ x = ' .. x .. ', y = ' .. y .. ', w = ' .. w .. ', h = ' .. h .. screenString .. ' }')
-end 
+    local clipboardContent = string.format('{ x = %.2f, y = %.2f, w = %.2f, h = %.2f%s }', x, y, w, h, screenString)
 
-local function getApplicationName(bundleID)
+    hs.pasteboard.setContents(clipboardContent)
+end
+
+local function getApplicationName(bundleId)
     for _, application in ipairs(config.HYPER_APPS) do
-        if application[2] == bundleID then
+        if application[2] == bundleId then
             return application[3]
+        end
+    end
+
+    return nil
+end
+
+local function getApplicationBundleId(name)
+    for _, application in ipairs(config.HYPER_APPS) do
+        if application[3] == name then
+            return application[2]
         end
     end
 
@@ -69,12 +62,12 @@ end
 
 
 local function getWindowLocation(key)
-    local locations = config.WINDOW_LOCATIONS[workspace]
+    local locations = config.WINDOW_LOCATIONS[workspace.get()]
     return locations and locations[key] or nil
 end
 
 local function getApplicationLocationKey(name)
-    local presets = config.WINDOW_PRESETS[workspace]
+    local presets = config.WINDOW_PRESETS[workspace.get()]
 
     for key, applications in pairs(presets) do
         for _, application in ipairs(applications) do
@@ -99,23 +92,22 @@ local function snapWindow(location, window)
     else
         window:moveToScreen(hs.screen.primaryScreen())
     end
-    
+
     local frame = window:frame()
     local screen = window:screen():frame()
-    
+
     frame.x = location.x and screen.x + screen.w * location.x or frame.x
     frame.y = location.y and screen.y + screen.h * location.y or frame.y
     frame.w = location.w and screen.w * location.w or frame.w
     frame.h = location.h and screen.h * location.h or frame.h
-    
+
     window:setFrame(frame)
-    window:focus()
 
     hs.window.animationDuration = 1
 end
 
 local function snapWorkspaceWindow(key, application)
-    return function ()
+    return function()
         local location = getWindowLocation(key)
 
         if location then
@@ -143,66 +135,60 @@ local function snapAllWindows()
     end
 end
 
+local function bringToFront()
+    local presets = config.WINDOW_PRESETS[workspace.get()]
+
+    for _, applications in pairs(presets) do
+        local name = applications[1]
+        local bundleId = getApplicationBundleId(name)
+
+        if bundleId then
+            local application = hs.application.get(bundleId)
+
+            print(hs.inspect(application));
+
+            if application then
+                application:activate()
+            end
+        end
+    end
+
+    return nil
+end
+
 local function windowCreated(window)
     local application = window:application()
 
     local name = getApplicationName(application:bundleID())
     local key = getApplicationLocationKey(name)
 
-    snapWorkspaceWindow(key, application)();
+    snapWorkspaceWindow(key, application)()
 end
 
-local function initMenu()
-    if menubar then
-        menubar:delete();
+local function unlockWatcher(eventType)
+    if eventType == hs.caffeinate.watcher.screensDidUnlock then
+        workspace.reset()
+        snapAllWindows()
     end
-
-    menubar = hs.menubar.new()
-    menubar:setIcon(hs.image.imageFromPath("keyboard/assets/icons/hyper.png"):setSize({ w = 20, h = 20 }))
-
-    local menuData = {
-        { title = 'Snap windows (w)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'w') end },
-        { title = 'Hyper keys (e)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'e') end },
-        { title = 'Copy ID (r)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 'r') end },
-        { title = 'Copy preset (a)', fn = function() hs.eventtap.keyStroke({'shift', 'ctrl', 'alt', 'cmd'}, 's') end },
-    }
-
-    for icon, _ in pairs(config.WINDOW_WORKSPACES) do
-        if icon ~= workspace then
-            table.insert(menuData, {
-                title = "Switch to " .. icon,
-                fn = function()
-                    workspace = icon
-                    initMenu()
-                    snapAllWindows()
-                end
-            })
-        end
-    end
-
-    menubar:setMenu(menuData)
 end
 
 local function init()
-    workspace = getWorkspaceForIPAddress()
-    snapAllWindows();
-    initMenu();
+    snapAllWindows()
 
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'w', nil, snapAllWindows)
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 's', nil, copyPresetToClipboard)
+    hs.hotkey.bind(config.HYPER_KEY, 'w', nil, snapAllWindows)
+    hs.hotkey.bind(config.HYPER_KEY, 'e', nil, bringToFront)
+    hs.hotkey.bind(config.HYPER_KEY, 's', nil, copyPresetToClipboard)
+    hs.hotkey.bind(config.HYPER_KEY, 'd', nil, copyMainScreenToClipboard)
 
     for key, _ in pairs(getWindowLocationsKeys()) do
-        hs.hotkey.bind({ 'shift', 'ctrl', 'alt', 'cmd' }, key, nil, snapWorkspaceWindow(key))
+        hs.hotkey.bind(config.HYPER_KEY, key, nil, snapWorkspaceWindow(key))
     end
 
     WindowFilter = hs.window.filter.new()
     WindowFilter:subscribe(hs.window.filter.windowCreated, windowCreated)
+
+    UnlockWatcher = hs.caffeinate.watcher.new(unlockWatcher)
+    UnlockWatcher:start()
 end
 
 init()
-
-hs.caffeinate.watcher.new(function(eventType)
-    if eventType == hs.caffeinate.watcher.screensDidUnlock then
-        init()
-    end
-end):start()

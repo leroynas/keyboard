@@ -1,19 +1,21 @@
-local function setSystemDM(state)
+local config = require('keyboard._config')
+
+local function isDarkMode()
+    return hs.host.interfaceStyle() == 'Dark'
+end
+
+local function toggleDarkMode()
     return hs.osascript.javascript(
         string.format(
             "Application('System Events').appearancePreferences.darkMode.set(%s)",
-            state
+            not isDarkMode()
         )
     )
 end
 
 local function init()
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'd', nil, function()
-        setSystemDM(true)
-    end)
-    
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'f', nil, function()
-        setSystemDM(false)
+    hs.hotkey.bind(config.HYPER_KEY, 'f', nil, function()
+        toggleDarkMode()
     end)
 end
 

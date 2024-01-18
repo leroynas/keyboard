@@ -2,12 +2,12 @@ local config = require('keyboard._config')
 local render = require('keyboard._render')
 
 local function copyIdToClipboard()
-    local bundleID = hs.application.frontmostApplication():bundleID()
-    hs.pasteboard.setContents(bundleID)
+    local bundleId = hs.application.frontmostApplication():bundleID()
+    hs.pasteboard.setContents(bundleId)
 end
 
 local function capitalizeFirstLetter(str)
-    return str:sub(1,1):upper() .. str:sub(2)
+    return str:sub(1, 1):upper() .. str:sub(2)
 end
 
 local function showApplicationHotkeys()
@@ -26,32 +26,33 @@ local function showApplicationHotkeys()
 end
 
 local function toggleApplication(app)
-    return function ()
+    return function()
         local application = hs.application.get(app)
-        
+
         if application then
             if application:isFrontmost() then
                 application:hide()
             else
                 application:unhide()
                 hs.application.open(app)
-            end 
+            end
         else
-            hs.application.open(app) 
+            hs.application.open(app)
         end
     end
 end
 
 local function init()
-    for i, mapping in ipairs(config.HYPER_APPS) do
+    for _, mapping in ipairs(config.HYPER_APPS) do
         local key = mapping[1]
         local app = mapping[2]
-        
-        hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, key, toggleApplication(app))
+
+        hs.hotkey.bind(config.HYPER_KEY, key, toggleApplication(app))
     end
-    
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'e', nil, showApplicationHotkeys)
-    hs.hotkey.bind({'shift', 'ctrl', 'alt', 'cmd'}, 'r', nil, copyIdToClipboard)
+
+    hs.hotkey.bind(config.HYPER_KEY, 'e', nil, showApplicationHotkeys)
+    hs.hotkey.bind(config.HYPER_KEY, '\\', nil, showApplicationHotkeys)
+    hs.hotkey.bind(config.HYPER_KEY, 'a', nil, copyIdToClipboard)
 end
 
 init()
