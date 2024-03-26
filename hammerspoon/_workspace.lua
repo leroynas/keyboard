@@ -9,14 +9,18 @@ local function set(name)
 end
 
 local function reset()
-    local mainScreen = hs.screen.mainScreen():name()
+    local primaryScreen = hs.screen.primaryScreen():name()
+
+    hs.logger.new('workspace'):e('Primary screen: ', primaryScreen)
 
     for workspace, situation in pairs(config.WORKSPACE_ITEMS) do
-        if mainScreen == situation.mainScreen then
+        if primaryScreen == situation.primaryScreen then
+            hs.logger.new('workspace'):e('Workspace: ', workspace)
             return set(workspace)
         end
     end
 
+    hs.logger.new('workspace'):e(config.WORKSPACE_DEFAULT)
     return set(config.WORKSPACE_DEFAULT)
 end
 

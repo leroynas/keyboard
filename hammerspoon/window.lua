@@ -106,17 +106,17 @@ local function snapWindow(location, window)
     hs.window.animationDuration = 1
 end
 
-local function snapWorkspaceWindow(key, application)
+local function snapWorkspaceWindow(key, application, window)
     return function()
         local location = getWindowLocation(key)
 
         if location then
-            if application then
+            if window then
+                snapWindow(location, window)
+            elseif application then
                 for _, window in ipairs(application:allWindows()) do
                     snapWindow(location, window)
                 end
-            else
-                snapWindow(location)
             end
         end
     end
@@ -145,8 +145,6 @@ local function bringToFront()
         if bundleId then
             local application = hs.application.get(bundleId)
 
-            print(hs.inspect(application));
-
             if application then
                 application:activate()
             end
@@ -162,13 +160,18 @@ local function windowCreated(window)
     local name = getApplicationName(application:bundleID())
     local key = getApplicationLocationKey(name)
 
-    snapWorkspaceWindow(key, application)()
+    snapWorkspaceWindow(key, nil, window)()
 end
 
-local function unlockWatcher(eventType)
-    if eventType == hs.caffeinate.watcher.screensDidUnlock then
-        workspace.reset()
-        snapAllWindows()
+
+
+local function screenWatcher()
+    local old = workspace.get()
+    workspace.reset()
+    local new = workspace.get()
+
+    if old ~= new then
+        hs.timer.doAfter(1, snapAllWindows)
     end
 end
 
@@ -187,8 +190,8 @@ local function init()
     WindowFilter = hs.window.filter.new()
     WindowFilter:subscribe(hs.window.filter.windowCreated, windowCreated)
 
-    UnlockWatcher = hs.caffeinate.watcher.new(unlockWatcher)
-    UnlockWatcher:start()
+    ScreenWatcher = hs.screen.watcher.new(screenWatcher)
+    ScreenWatcher:start()
 end
 
 init()

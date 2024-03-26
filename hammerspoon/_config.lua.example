@@ -6,7 +6,7 @@ return {
     HYPER_KEY = { 'cmd', 'alt', 'ctrl', 'shift' },
     HYPER_APPS = {
         { 't',  'com.google.Chrome.app.agimnkijcaahngcdmfeangaknmldooml', 'youtube' }, -- Youtube
-        { 'y',  'com.spotify.client',                                     'spotify' },
+        { 'y',  'com.spotify.client',                                     'music' },
         { 'u',  'net.whatsapp.WhatsApp',                                  'whatsapp' },
         { 'i',  'com.tinyspeck.slackmacgap',                              'slack' },
         { 'o',  'com.microsoft.Outlook',                                  'outlook' },
@@ -21,7 +21,7 @@ return {
         { ';',  'com.apple.finder',                                       'finder' },
         { '\'', 'com.google.Chrome.app.jckaldkomadaenmmgladeopgmfbahfjm', 'chatgpt' },   -- ChatGPT
 
-        { 'v',  'com.google.Chrome.app.piejkokinlnclhkbnajfjiklpnglogfn', 'viaplay' },   -- Viaplay
+        { 'v',  'com.google.Chrome.app.odaaojmcjgjeagefapjncffiippojpcf', 'viaplay' },   -- Viaplay
         { 'b',  'com.google.Chrome.app.jmbmfkcklehpncjdciobggbfknplngcl', 'bitbucket' }, -- Bitbucket
         { 'n',  'com.google.Chrome.app.ninkclcondpjflmchmajlfpnmjfalnai', 'jira' },      -- Jira
         { 'm',  'com.figma.Desktop',                                      'figma' },
@@ -30,9 +30,9 @@ return {
     -- Workspace
     WORKSPACE_DEFAULT = '🏠',
     WORKSPACE_ITEMS = {
-        ['💻'] = { mainScreen = 'Built-in Retina Display' },
-        ['🏠'] = { mainScreen = 'LG ULTRAWIDE' },
-        ['🏢'] = { mainScreen = '' },
+        ['💻'] = { primaryScreen = 'Built-in Retina Display' },
+        ['🏠'] = { primaryScreen = 'LG ULTRAWIDE' },
+        ['🏢'] = { primaryScreen = 'LG ULTRAFINE' },
     },
 
     -- Windows
@@ -58,21 +58,21 @@ return {
     -- Every first item in the list is focused when "Focus windows" is triggered
     WINDOW_PRESETS = {
         ['💻'] = {
-            ['1'] = { 'vscode', 'chrome', 'chatgpt', 'postman', 'figma', 'jira', 'bitbucket', 'youtube', 'viaplay', 'spotify', 'outlook', 'slack', 'whatsapp', 'finder', 'preview', 'warp', 'sequel', 'teams' }, -- primary
+            ['1'] = { 'vscode', 'chrome', 'chatgpt', 'postman', 'figma', 'jira', 'bitbucket', 'youtube', 'viaplay', 'music', 'outlook', 'slack', 'whatsapp', 'finder', 'preview', 'warp', 'sequel', 'teams' }, -- primary
         },
         ['🏠'] = {
-            ['1'] = { 'vscode' },                                                                             -- primary
-            ['2'] = { 'chrome', 'chatgpt', 'postman', 'figma' },                                              -- secondary
-            ['3'] = { 'jira', 'bitbucket', 'youtube', 'viaplay', 'spotify', 'outlook', 'slack', 'whatsapp' }, -- left-top
-            ['4'] = { 'finder', 'preview', 'warp', 'sequel' },                                                -- left-bottom
-            ['5'] = { 'teams' },                                                                              -- middle
+            ['1'] = { 'vscode' },                                                                                    -- primary
+            ['2'] = { 'chrome', 'chatgpt', 'postman' },                                                              -- secondary
+            ['3'] = { 'jira', 'bitbucket', 'youtube', 'viaplay', 'music', 'outlook', 'slack', 'whatsapp', 'figma' }, -- left-top
+            ['4'] = { 'finder', 'preview', 'warp', 'sequel' },                                                       -- left-bottom
+            ['5'] = { 'teams' },                                                                                     -- middle
         },
         ['🏢'] = {
-            ['1'] = { 'vscode' },                                                                             -- primary
-            ['2'] = { 'chrome', 'chatgpt', 'postman', 'figma' },                                              -- secondary
-            ['3'] = { 'jira', 'bitbucket', 'youtube', 'viaplay', 'spotify', 'outlook', 'slack', 'whatsapp' }, -- left-top
-            ['4'] = { 'finder', 'preview', 'warp', 'sequel' },                                                -- left-bottom
-            ['5'] = { 'teams' },                                                                              -- middle
+            ['1'] = { 'vscode' },                                                                           -- primary
+            ['2'] = { 'chrome', 'chatgpt', 'postman', 'figma' },                                            -- secondary
+            ['3'] = { 'jira', 'bitbucket', 'youtube', 'viaplay', 'music', 'outlook', 'slack', 'whatsapp' }, -- left-top
+            ['4'] = { 'finder', 'preview', 'warp', 'sequel' },                                              -- left-bottom
+            ['5'] = { 'teams' },                                                                            -- middle
         },
     }
 }
