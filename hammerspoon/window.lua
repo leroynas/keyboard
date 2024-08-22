@@ -109,15 +109,16 @@ end
 local function snapWorkspaceWindow(key, application, window)
     return function()
         local location = getWindowLocation(key)
-
         if location then
-            if window then
-                snapWindow(location, window)
-            elseif application then
+            if application then
                 for _, window in ipairs(application:allWindows()) do
                     snapWindow(location, window)
                 end
+
+                return;
             end
+
+            snapWindow(location, window)
         end
     end
 end

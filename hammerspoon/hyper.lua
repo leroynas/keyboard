@@ -25,19 +25,37 @@ local function showApplicationHotkeys()
     render.message(text, 250)
 end
 
-local function toggleApplication(app)
-    return function()
-        local application = hs.application.get(app)
+local function toggleApplication(apps)
+    local currentIndex = 1
+    local currentApp = apps[currentIndex]
+    local application = hs.application.get(currentApp)
 
+    local function nextApplication()
+        if currentIndex == #apps then
+            currentIndex = 1
+        else
+            currentIndex = currentIndex + 1
+        end
+
+        currentApp = apps[currentIndex]
+        application = hs.application.get(currentApp)
+
+        application:unhide()
+        hs.application.open(currentApp)
+    end
+
+    return function()
         if application then
             if application:isFrontmost() then
                 application:hide()
+
+                if #apps > 1 then
+                    nextApplication()
+                end
             else
                 application:unhide()
-                hs.application.open(app)
+                hs.application.open(currentApp)
             end
-        else
-            hs.application.open(app)
         end
     end
 end
@@ -45,9 +63,15 @@ end
 local function init()
     for _, mapping in ipairs(config.HYPER_APPS) do
         local key = mapping[1]
-        local app = mapping[2]
+        local apps = {}
 
-        hs.hotkey.bind(config.HYPER_KEY, key, toggleApplication(app))
+        for _, m in ipairs(config.HYPER_APPS) do
+            if m[1] == key then
+                table.insert(apps, m[2])
+            end
+        end
+
+        hs.hotkey.bind(config.HYPER_KEY, key, toggleApplication(apps))
     end
 
     hs.hotkey.bind(config.HYPER_KEY, 'e', nil, showApplicationHotkeys)
