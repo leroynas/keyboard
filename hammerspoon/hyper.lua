@@ -56,6 +56,8 @@ local function toggleApplication(apps)
                 application:unhide()
                 hs.application.open(currentApp)
             end
+        else
+            hs.application.open(currentApp)
         end
     end
 end
