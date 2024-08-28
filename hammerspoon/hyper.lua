@@ -28,7 +28,6 @@ end
 local function toggleApplication(apps)
     local currentIndex = 1
     local currentApp = apps[currentIndex]
-    local application = hs.application.get(currentApp)
 
     local function nextApplication()
         if currentIndex == #apps then
@@ -38,23 +37,26 @@ local function toggleApplication(apps)
         end
 
         currentApp = apps[currentIndex]
-        application = hs.application.get(currentApp)
 
-        application:unhide()
+        hs.application.get(currentApp):unhide()
         hs.application.open(currentApp)
     end
 
     return function()
+        local application = hs.application.get(currentApp)
+
         if application then
-            if not application:isFrontmost() or application:isHidden() then
-                application:unhide()
-                hs.application.open(currentApp)
-            else
+            local frontMostApp = hs.window.frontmostWindow():application():bundleID()
+
+            if currentApp == frontMostApp then
                 application:hide()
 
                 if #apps > 1 then
                     nextApplication()
                 end
+            else
+                application:unhide()
+                hs.application.open(currentApp)
             end
         else
             hs.application.open(currentApp)
