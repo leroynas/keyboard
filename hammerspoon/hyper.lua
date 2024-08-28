@@ -46,18 +46,19 @@ local function toggleApplication(apps)
 
     return function()
         if application then
-            if application:isFrontmost() then
+            if not application:isFrontmost() or application:isHidden() then
+                application:unhide()
+                hs.application.open(currentApp)
+            else
                 application:hide()
 
                 if #apps > 1 then
                     nextApplication()
                 end
-            else
-                application:unhide()
-                hs.application.open(currentApp)
             end
         else
             hs.application.open(currentApp)
+            application = hs.application.get(currentApp)
         end
     end
 end
