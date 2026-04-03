@@ -13,7 +13,7 @@ local function reset()
 
     hs.logger.new('workspace'):e('Primary screen: ', primaryScreen)
 
-    for workspace, situation in pairs(config.WORKSPACE_ITEMS) do
+    for workspace, situation in pairs(config.WORKSPACE_SCREENS) do
         if primaryScreen == situation.primaryScreen then
             hs.logger.new('workspace'):e('Workspace: ', workspace)
             return set(workspace)

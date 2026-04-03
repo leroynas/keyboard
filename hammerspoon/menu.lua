@@ -34,7 +34,7 @@ local function render()
         { title = 'Hyper app list',   shortcut = '\\', fn = hyperKeys },
     }
 
-    for ws, _ in pairs(config.WORKSPACE_ITEMS) do
+    for ws, _ in pairs(config.WORKSPACE_SCREENS) do
         table.insert(menuData, 1, {
             title = "Switch to " .. ws,
             fn = function()

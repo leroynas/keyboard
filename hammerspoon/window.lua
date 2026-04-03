@@ -101,6 +101,20 @@ local function snapWindow(location, window)
     frame.w = location.w and screen.w * location.w or frame.w
     frame.h = location.h and screen.h * location.h or frame.h
 
+    if location.gap then
+        local gap  = config.WINDOW_GAP
+        local half = gap / 2
+        local eps  = 0.001
+        local left   = location.x < eps and gap or half
+        local top    = location.y < eps and gap or half
+        local right  = (1.0 - location.x - location.w) < eps and gap or half
+        local bottom = (1.0 - location.y - location.h) < eps and gap or half
+        frame.x = frame.x + left
+        frame.y = frame.y + top
+        frame.w = frame.w - left - right
+        frame.h = frame.h - top - bottom
+    end
+
     window:setFrame(frame)
 
     hs.window.animationDuration = 1

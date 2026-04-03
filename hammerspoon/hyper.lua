@@ -25,59 +25,30 @@ local function showApplicationHotkeys()
     render.message(text, 250)
 end
 
-local function toggleApplication(apps)
-    local currentIndex = 1
-    local currentApp = apps[currentIndex]
-
-    local function nextApplication()
-        if currentIndex == #apps then
-            currentIndex = 1
-        else
-            currentIndex = currentIndex + 1
-        end
-
-        currentApp = apps[currentIndex]
-
-        hs.application.get(currentApp):unhide()
-        hs.application.open(currentApp)
-    end
-
+local function toggleApplication(app)
     return function()
-        local application = hs.application.get(currentApp)
+        local application = hs.application.get(app)
 
         if application then
-            local frontMostApp = hs.window.frontmostWindow():application():bundleID()
-
-            if currentApp == frontMostApp then
+            if application:isFrontmost() then
                 application:hide()
-
-                if #apps > 1 then
-                    nextApplication()
-                end
             else
                 application:unhide()
-                hs.application.open(currentApp)
+                hs.application.open(app)
             end
         else
-            hs.application.open(currentApp)
-            application = hs.application.get(currentApp)
+            hs.application.open(app)
         end
     end
 end
 
 local function init()
-    for _, mapping in ipairs(config.HYPER_APPS) do
-        local key = mapping[1]
-        local apps = {}
-
-        for _, m in ipairs(config.HYPER_APPS) do
-            if m[1] == key then
-                table.insert(apps, m[2])
-            end
+    for _, app in ipairs(config.HYPER_APPS) do
+        if app[1] ~= '' then
+            hs.hotkey.bind(config.HYPER_KEY, app[1], toggleApplication(app[2]))
         end
-
-        hs.hotkey.bind(config.HYPER_KEY, key, toggleApplication(apps))
     end
+            
 
     hs.hotkey.bind(config.HYPER_KEY, 'e', nil, showApplicationHotkeys)
     hs.hotkey.bind(config.HYPER_KEY, '\\', nil, showApplicationHotkeys)

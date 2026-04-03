@@ -29,13 +29,14 @@ return {
 
     -- Workspace
     WORKSPACE_DEFAULT = '🏠',
-    WORKSPACE_ITEMS = {
+    WORKSPACE_SCREENS = {
         ['💻'] = { primaryScreen = 'Built-in Retina Display' },
         ['🏠'] = { primaryScreen = 'LG ULTRAWIDE' },
         ['🏢'] = { primaryScreen = 'LG ULTRAFINE' },
     },
 
     -- Windows
+    WINDOW_GAP = 20,
     WINDOW_LOCATIONS = {
         ['💻'] = {
             ['1'] = { x = 0.00, y = 0.00, w = 1.00, h = 1.00 }, -- primary
